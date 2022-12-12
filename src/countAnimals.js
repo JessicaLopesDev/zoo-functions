@@ -9,10 +9,12 @@ const getAllSpecies = () => {
 };
 
 const countAnimals = (animal) => {
+  if (!animal) {
+    return getAllSpecies();
+  }
+
   const getBySpecie = data.species.find((item) => item.name === animal.species);
   const getBySex = getBySpecie.residents.filter((resident) => resident.sex === animal.sex);
-
-  if (!animal) getAllSpecies();
 
   if (!animal.sex) {
     return getBySpecie.residents.length;
