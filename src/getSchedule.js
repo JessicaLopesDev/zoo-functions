@@ -15,12 +15,13 @@ const createObj = () => {
   const obj = {};
 
   allDays.forEach((item) => {
-    obj[item] = {
-      officeHour: `Open from ${hours[item].open}am until ${hours[item].close}pm`,
-      exhibition: getAnimalsByDay(item),
-    };
+    obj[item] = item === 'Monday'
+      ? { officeHour: 'CLOSED', exhibition: 'The zoo will be closed!' }
+      : {
+        officeHour: `Open from ${hours[item].open}am until ${hours[item].close}pm`,
+        exhibition: getAnimalsByDay(item),
+      };
   });
-  obj.Monday = { officeHour: 'CLOSED', exhibition: 'The zoo will be closed!' };
   return obj;
 };
 // Valida os parametros passados para chamar funçoes correspondentes
