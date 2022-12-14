@@ -50,11 +50,10 @@ const invalidParameter = (target) => {
 };
 
 const getSchedule = (scheduleTarget) => {
-
   if (allSpecies.includes(scheduleTarget)) return specieParameter(scheduleTarget).availability;
 
   // if (allDays.includes(scheduleTarget)) {
-    
+
   // }
 
   return invalidParameter(scheduleTarget);
