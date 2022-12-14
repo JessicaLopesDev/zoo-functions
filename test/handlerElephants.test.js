@@ -10,5 +10,6 @@ describe('Testes da função HandlerElephants', () => {
     expect(handlerElephants('location')).toBe('NW');
     expect(handlerElephants('popularity')).toBeGreaterThanOrEqual(5);
     expect(handlerElephants('availability')).not.toContain('Monday');
+    expect(handlerElephants('qualquer coisa')).toBeNull();
   });
 });
