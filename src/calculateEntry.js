@@ -20,6 +20,7 @@ const calculateEntry = (entrants) => {
   if (!entrants || !Array.isArray(entrants)) return 0;
 
   const quantityByAge = countEntrants(entrants);
+
   const total = (quantityByAge.child * prices.child)
     + (quantityByAge.adult * prices.adult) + (quantityByAge.senior * prices.senior);
 
