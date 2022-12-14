@@ -1,66 +1,39 @@
 const data = require('../data/zoo_data');
 
 const { hours } = data;
-
-const hoursData = {
-  Tuesday: {
-    officeHour: 'Open from 8am until 6pm',
-    exhibition: ['lions', 'tigers', 'bears', 'penguins', 'elephants', 'giraffes'],
-  },
-  Wednesday: {
-    officeHour: 'Open from 8am until 6pm',
-    exhibition: ['tigers', 'bears', 'penguins', 'otters', 'frogs', 'giraffes'],
-  },
-  Thursday: {
-    officeHour: 'Open from 10am until 8pm',
-    exhibition: ['lions', 'otters', 'frogs', 'snakes', 'giraffes'],
-  },
-  Friday: {
-    officeHour: 'Open from 10am until 8pm',
-    exhibition: ['tigers', 'otters', 'frogs', 'snakes', 'elephants', 'giraffes'],
-  },
-  Saturday: {
-    officeHour: 'Open from 8am until 10pm',
-    exhibition: [
-      'lions', 'tigers',
-      'bears', 'penguins',
-      'otters', 'frogs',
-      'snakes', 'elephants',
-    ],
-  },
-  Sunday: {
-    officeHour: 'Open from 8am until 8pm',
-    exhibition: ['lions', 'bears', 'penguins', 'snakes', 'elephants'],
-  },
-  Monday: { officeHour: 'CLOSED', exhibition: 'The zoo will be closed!' },
-};
-
-console.log('AQUI', hoursData[0]);
-
-const specieParameter = (target) => data.species.find((specie) => specie.name === target);
-
-const allSpecies = data.species.map((item) => item.name);
+// Array com todos os dias
 const allDays = Object.keys(hours);
-// const allHours = Object.values(hours);
+// Array com todas as especies por nome
+const allSpecies = data.species.map((item) => item.name);
+// Retorna os dias que a especie passada por parametro está disponível
+const specieParameter = (target) => data.species.find((specie) => specie.name === target);
+// Retorna array com especies que estão disponíveis por dia
+const getAnimalsByDay = (item) => data.species
+  .filter((animal) => animal.availability.includes(item)).map((specieName) => specieName.name);
+// Cria, dinamicamente, o cronograma de todos os dias
+const createObj = () => {
+  const obj = {};
 
-const invalidParameter = (target) => {
-  if (!target || !allSpecies.includes(target) || !allDays.includes(target)) {
-    return hoursData;
-  }
+  allDays.forEach((item) => {
+    obj[item] = {
+      officeHour: `Open from ${hours[item].open}am until ${hours[item].close}pm`,
+      exhibition: getAnimalsByDay(item),
+    };
+  });
+  obj.Monday = { officeHour: 'CLOSED', exhibition: 'The zoo will be closed!' };
+  return obj;
 };
-
+// Valida os parametros passados para chamar funçoes correspondentes
 const getSchedule = (scheduleTarget) => {
   if (allSpecies.includes(scheduleTarget)) return specieParameter(scheduleTarget).availability;
-
+  // Se o paramentro for um dia da semana retorna o cronograma somente daquele dia
   if (allDays.includes(scheduleTarget)) {
+    const officeDays = createObj();
     return {
-      [scheduleTarget]: hoursData[scheduleTarget],
+      [scheduleTarget]: officeDays[scheduleTarget],
     };
   }
-
-  return invalidParameter(scheduleTarget);
+  return createObj();
 };
-
-console.log(getSchedule('Wednesday'));
 
 module.exports = getSchedule;
