@@ -1,84 +1,56 @@
 const data = require('../data/zoo_data');
+
+const locations = ['NE', 'NW', 'SE', 'SW'];
+
 // Array com nomes das especies por localização
-const findSpecieByLocation = (initial) => data.species.filter((specie) =>
+const speciesByLocationArray = (initial) => data.species.filter((specie) =>
   specie.location === initial).map((item) => item.name);
 
-// Array com nomes dos residentes por especie
+// Encontra o objeto da espécie
 const findSpecie = (element) => data.species.find((item) => item.name === element);
 
-const createResidentsArrayBySex = (element, sex) =>
-  findSpecie(element).residents.filter((resident) => resident.sex === sex).map((item) => item.name);
+// Array de residents da specie por sexo
+const residentsArrayBySex = (specie, options) => {
+  const filteredResidentsBySex = findSpecie(specie).residents.filter((resident) =>
+    resident.sex === options.sex).map((item) => item.name);
 
-// Cria objeto da especie com residentes por sexo em ordem ou sem ordem
-const createObjectBySex = (initial, sex, sorted) => {
-  if (sorted) {
-    return findSpecieByLocation(initial).map((element) => ({
-      [element]: createResidentsArrayBySex(element, sex).sort(),
-    }));
+  if (options.sorted) {
+    return filteredResidentsBySex.sort();
   }
-  return findSpecieByLocation(initial).map((element) => ({
-    [element]: createResidentsArrayBySex(element, sex),
+  return filteredResidentsBySex;
+};
+
+// Array com todos residents da specie
+const allResidentsArray = (specie, options) => {
+  const filteredResidents = findSpecie(specie).residents.map((resident) => resident.name);
+
+  if (options.sorted) {
+    return filteredResidents.sort();
+  }
+  return filteredResidents;
+};
+
+// Cria array com residentes por especie e por sexo(se for passado no parametro)
+const createArrayWithResidents = (initial, options) =>
+  speciesByLocationArray(initial).map((element) => ({
+    [element]: options.sex ? residentsArrayBySex(element, options)
+      : allResidentsArray(element, options),
   }));
-};
 
-const createAllResidentsArray = (specie) =>
-  findSpecie(specie).residents.map((resident) => resident.name);
+// Função principal: Se não receber parametro ou se não existir o parametro includeNames retorna um objeto com nomes
+// das especies por cada região. Se existir includeNames retorna um objeto com residentes das especies também.
+const getAnimalMap = (options) => {
+  const result = {};
 
-// Cria objeto da especie com nomes dos residentes
-const createObjectBySpecie = (initial, sorted) => {
-  if (sorted) {
-    return findSpecieByLocation(initial).map((element) => ({
-      [element]: createAllResidentsArray(element).sort(),
-    }));
-  }
-  return findSpecieByLocation(initial).map((element) => ({
-    [element]: createAllResidentsArray(element),
-  }));
-};
-
-const createObject = () => {
-  const objResult = {
-    NE: findSpecieByLocation('NE'),
-    NW: findSpecieByLocation('NW'),
-    SE: findSpecieByLocation('SE'),
-    SW: findSpecieByLocation('SW'),
-  };
-  return objResult;
-};
-
-// Cria objeto final
-const createObjWithNames = (sex, sorted) => {
-  let result = {};
-  if (sex) {
-    result = {
-      NE: createObjectBySex('NE', sex, sorted),
-      NW: createObjectBySex('NW', sex, sorted),
-      SE: createObjectBySex('SE', sex, sorted),
-      SW: createObjectBySex('SW', sex, sorted),
-    };
-  }
-  if (!sex) {
-    result = {
-      NE: createObjectBySpecie('NE', sorted),
-      NW: createObjectBySpecie('NW', sorted),
-      SE: createObjectBySpecie('SE', sorted),
-      SW: createObjectBySpecie('SW', sorted),
-    };
-  }
+  locations.forEach((location) => {
+    if (!options || !options.includeNames) {
+      result[location] = speciesByLocationArray(location);
+    }
+    if (options && options.includeNames) {
+      result[location] = createArrayWithResidents(location, options);
+    }
+  });
   return result;
 };
-
-// Função principal, valida se recebe parametro e se recebe, quais são.
-const getAnimalMap = (options) => {
-  if (!options) return createObject();
-
-  const { includeNames, sex, sorted } = options;
-
-  if (includeNames) return createObjWithNames(sex, sorted);
-
-  if (!includeNames) return createObject();
-};
-
-console.log(getAnimalMap());
 
 module.exports = getAnimalMap;
