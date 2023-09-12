@@ -3,16 +3,20 @@ const data = require('../data/zoo_data');
 const locations = ['NE', 'NW', 'SE', 'SW'];
 
 // Array com nomes das especies por localização
-const speciesByLocationArray = (initial) => data.species.filter((specie) =>
-  specie.location === initial).map((item) => item.name);
+const speciesByLocationArray = (initial) =>
+  data.species
+    .filter((specie) => specie.location === initial)
+    .map((item) => item.name);
 
 // Encontra o objeto da espécie
-const findSpecie = (element) => data.species.find((item) => item.name === element);
+const findSpecie = (element) =>
+  data.species.find((item) => item.name === element);
 
 // Array de residents da specie por sexo
 const residentsArrayBySex = (specie, options) => {
-  const filteredResidentsBySex = findSpecie(specie).residents.filter((resident) =>
-    resident.sex === options.sex).map((item) => item.name);
+  const filteredResidentsBySex = findSpecie(specie)
+    .residents.filter((resident) => resident.sex === options.sex)
+    .map((item) => item.name);
 
   if (options.sorted) {
     return filteredResidentsBySex.sort();
@@ -22,7 +26,9 @@ const residentsArrayBySex = (specie, options) => {
 
 // Array com todos residents da specie
 const allResidentsArray = (specie, options) => {
-  const filteredResidents = findSpecie(specie).residents.map((resident) => resident.name);
+  const filteredResidents = findSpecie(specie).residents.map(
+    (resident) => resident.name,
+  );
 
   if (options.sorted) {
     return filteredResidents.sort();
@@ -33,7 +39,8 @@ const allResidentsArray = (specie, options) => {
 // Cria array com residentes por especie e por sexo(se for passado no parametro)
 const createArrayWithResidents = (initial, options) =>
   speciesByLocationArray(initial).map((element) => ({
-    [element]: options.sex ? residentsArrayBySex(element, options)
+    [element]: options.sex
+      ? residentsArrayBySex(element, options)
       : allResidentsArray(element, options),
   }));
 
@@ -52,5 +59,7 @@ const getAnimalMap = (options) => {
   });
   return result;
 };
+
+console.log(getAnimalMap({}));
 
 module.exports = getAnimalMap;
